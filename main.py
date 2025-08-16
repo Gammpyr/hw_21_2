@@ -1,4 +1,5 @@
 # Импорт встроенной библиотеки для работы веб-сервера
+import json
 from http.server import BaseHTTPRequestHandler, HTTPServer
 
 # Для начала определим настройки запуска
@@ -21,11 +22,42 @@ class MyServer(BaseHTTPRequestHandler):
             data = file.read()
         self.wfile.write(bytes(data, "utf-8"))  # Тело ответа
 
+    # def do_POST(self):
+    #     """Обработка POST-запросов с JSON-данными"""
+    #     try:
+    #         # Получаем длину тела запроса
+    #         content_length = int(self.headers.get('Content-Length', 0))
+    #
+    #         # Читаем и декодируем тело
+    #         body = self.rfile.read(content_length).decode('utf-8')
+    #         print("Received POST data:", body)
+    #
+    #         # Парсинг JSON (если нужно)
+    #         try:
+    #             data = json.loads(body)
+    #             print("Parsed JSON:", data)
+    #         except json.JSONDecodeError:
+    #             print("Not a JSON")
+    #
+    #         # Отправляем успешный ответ
+    #         self.send_response(200)
+    #         self.send_header('Content-type', 'application/json')
+    #         self.end_headers()
+    #
+    #         # Можно отправить ответ обратно
+    #         response = {"status": "success"}
+    #         self.wfile.write(json.dumps(response).encode('utf-8'))
+    #
+    #     except Exception as e:
+    #         self.send_response(500)
+    #         self.end_headers()
+    #         print("Error:", str(e))
+
     def do_POST(self):
         """ Метод для обработки входящих POST-запросов """
         content_length = int(self.headers['Content-Length'])
         body = self.rfile.read(content_length)
-        print(body)
+        print("Received POST data:", body)
         self.send_response(200)
         self.end_headers()
 
