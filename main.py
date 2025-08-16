@@ -17,7 +17,9 @@ class MyServer(BaseHTTPRequestHandler):
         self.send_response(200)  # Отправка кода ответа
         self.send_header("Content-type", "text/html")  # Отправка типа данных, который будет передаваться
         self.end_headers()  # Завершение формирования заголовков ответа
-        self.wfile.write(bytes("{'message': 'OK'}", "utf-8"))  # Тело ответа
+        with open('contacts.html', 'r', encoding='utf-8') as file:
+            data = file.read()
+        self.wfile.write(bytes(data, "utf-8"))  # Тело ответа
 
     def do_POST(self):
         """ Метод для обработки входящих POST-запросов """
