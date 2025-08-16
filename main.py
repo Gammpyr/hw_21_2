@@ -1,6 +1,7 @@
 # Импорт встроенной библиотеки для работы веб-сервера
 import json
 from http.server import BaseHTTPRequestHandler, HTTPServer
+from urllib.parse import parse_qs
 
 # Для начала определим настройки запуска
 hostName = "localhost"  # Адрес для доступа по сети
@@ -13,53 +14,55 @@ class MyServer(BaseHTTPRequestHandler):
         обработку входящих запросов от клиентов
     """
 
+    # def do_GET(self):
+    #     """ Метод для обработки входящих GET-запросов """
+    #     self.send_response(200)  # Отправка кода ответа
+    #     self.send_header("Content-type", "text/html")  # Отправка типа данных, который будет передаваться
+    #     self.end_headers()  # Завершение формирования заголовков ответа
+    #     with open('contacts.html', 'r', encoding='utf-8') as file:
+    #         data = file.read()
+    #     self.wfile.write(bytes(data, "utf-8"))  # Тело ответа
+
     def do_GET(self):
-        """ Метод для обработки входящих GET-запросов """
-        self.send_response(200)  # Отправка кода ответа
-        self.send_header("Content-type", "text/html")  # Отправка типа данных, который будет передаваться
-        self.end_headers()  # Завершение формирования заголовков ответа
-        with open('contacts.html', 'r', encoding='utf-8') as file:
-            data = file.read()
-        self.wfile.write(bytes(data, "utf-8"))  # Тело ответа
+        if self.path == '/':
+            self.path = '/contacts.html'
+        try:
+            with open(self.path[1:], 'r', encoding='utf-8') as file:
+                self.send_response(200)
+                self.send_header("Content-type", "text/html")
+                self.end_headers()
+                self.wfile.write(bytes(file.read(), "utf-8"))
+        except:
+            self.send_error(404)
 
     # def do_POST(self):
-    #     """Обработка POST-запросов с JSON-данными"""
-    #     try:
-    #         # Получаем длину тела запроса
-    #         content_length = int(self.headers.get('Content-Length', 0))
-    #
-    #         # Читаем и декодируем тело
-    #         body = self.rfile.read(content_length).decode('utf-8')
-    #         print("Received POST data:", body)
-    #
-    #         # Парсинг JSON (если нужно)
-    #         try:
-    #             data = json.loads(body)
-    #             print("Parsed JSON:", data)
-    #         except json.JSONDecodeError:
-    #             print("Not a JSON")
-    #
-    #         # Отправляем успешный ответ
-    #         self.send_response(200)
-    #         self.send_header('Content-type', 'application/json')
-    #         self.end_headers()
-    #
-    #         # Можно отправить ответ обратно
-    #         response = {"status": "success"}
-    #         self.wfile.write(json.dumps(response).encode('utf-8'))
-    #
-    #     except Exception as e:
-    #         self.send_response(500)
-    #         self.end_headers()
-    #         print("Error:", str(e))
+    #     """ Метод для обработки входящих POST-запросов """
+    #     content_length = int(self.headers['Content-Length'])
+    #     body = self.rfile.read(content_length)
+    #     print("Received POST data:", body)
+    #     self.send_response(200)
+    #     self.end_headers()
 
     def do_POST(self):
-        """ Метод для обработки входящих POST-запросов """
         content_length = int(self.headers['Content-Length'])
-        body = self.rfile.read(content_length)
-        print("Received POST data:", body)
+        post_data = self.rfile.read(content_length).decode('utf-8')
+
+        # Парсим данные формы
+        form_data = parse_qs(post_data)
+
+        # Выводим в консоль сервера
+        print("\n=== Получены данные формы ===")
+        print(f"Имя: {form_data.get('name', [''])[0]}")
+        print(f"Email: {form_data.get('email', [''])[0]}")
+        print(f"Сообщение: {form_data.get('message', [''])[0]}")
+        print("============================")
+
+        # Отправляем ответ
         self.send_response(200)
+        self.send_header("Content-type", "text/html")
         self.end_headers()
+        response = {"status": "success", "message": "Форма получена"}
+        self.wfile.write(json.dumps(response, ensure_ascii=False).encode('utf-8'))
 
 
 if __name__ == "__main__":
@@ -77,4 +80,4 @@ if __name__ == "__main__":
 
     # Корректная остановка веб-сервера, чтобы он освободил адрес и порт в сети, которые занимал
     webServer.server_close()
-    print("Server stopped.")
+    print("Сервер остановлен")
