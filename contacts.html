@@ -57,23 +57,24 @@
                 <div class="col-5 me-5">
                     <div class="card">
                         <div class="card-body">
-                            <form>
+                            <form id="contactForm" method="POST" action="/submit">
                                 <h2>Оставьте заявку</h2>
 
                                 <div class="mb-3">
-                                    <label class="form-label">Имя</label>
-                                    <input type="text" class="form-control" placeholder=" ">
+                                    <label for="name" class="form-label">Имя</label>
+                                    <input type="text" class="form-control" id="name" name="name" placeholder=" " required>
                                 </div>
-                                <label class="form-label">Почта</label>
-                                <div class="input-group mb-3">
 
-                                    <div class="input-group-text" id="btnGroupAddon">@</div>
-                                    <input type="email" class="form-control" placeholder=" "
+                                <label for="email" class="form-label">Почта</label>
+                                <div class="input-group mb-3">
+                                    <span class="input-group-text">@</span>
+                                    <input type="email" class="form-control" id="email" name="email" placeholder=" " required
                                            aria-label="Input group example" aria-describedby="btnGroupAddon">
                                 </div>
+
                                 <div class="mb-3">
-                                    <label for="exampleFormControlTextarea1" class="form-label">Сообщение</label>
-                                    <textarea class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
+                                    <label for="message" class="form-label">Сообщение</label>
+                                    <textarea class="form-control" id="message" name="message" rows="3" required></textarea>
                                 </div>
 
                                 <button type="submit" class="btn btn-primary">Отправить</button>
